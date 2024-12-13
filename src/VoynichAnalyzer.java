@@ -2,13 +2,13 @@
  * Project: Voynich Cipher Analyzer
  * Purpose Details: This program performs frequency analysis and attempts to decode a text possibly written in the Voynich manuscript style.
  * It applies various cipher techniques (Caesar cipher, monoalphabetic substitution, Vigenère cipher, transposition cipher) to decipher encrypted text.
- * The analysis is optimized for Latin and Spanish using dictionaries to validate words.
+ * The analysis is optimized for Latin, Spanish, and Italian using dictionaries to validate words.
  * Future extensions could include support for additional cipher techniques and more advanced frequency analyses.
  * Course: IST 242
  * Author: Aayudh Nandiwdekar
  * Date Developed: December 3, 2024
- * Last Date Changed: December 11, 2024
- * Revision: 1.4
+ * Last Date Changed: December 13, 2024
+ * Revision: 1.5
  * Sources Used:
  * 1. "Voynich Manuscript (Encoded Texts)" - Voynich.nu: https://voynich.nu/q17/f093v_tr.txt
  * 2. "Voynich Manuscript: A New Analysis" by R. A. S. Barrett - https://www.academic.oup.com/monographs/abstract/doi/10.1093/actrade/9780198807866.001.0001
@@ -22,17 +22,19 @@ import java.util.*;
 
 public class VoynichAnalyzer {
 
-    private static final String[] LANGUAGES = {"latin", "spanish"};
-    private static final String DICTIONARY_PATH = "./dictionary/";
+    private static final String[] LANGUAGES = {"italian", "spanish", "latin"};
+    private static final String DICTIONARY_PATH = "./dictionary/";  // Path to your dictionary files
     private static final String VIGENERE_KEY = "VOYNICH";
     private static final Map<Character, Character> MONOALPHABETIC_KEY = createMonoalphabeticKey();
 
     public static void main(String[] args) {
         System.out.println("Welcome to the Voynich Cipher Analyzer!");
 
+        // Loop through supported languages and perform analysis
         for (String language : LANGUAGES) {
-            String dictionaryFile = DICTIONARY_PATH + "dictionary.txt"; // Load the common dictionary
+            String dictionaryFile = DICTIONARY_PATH + language + "_dictionary.txt"; // Load dictionary for specific language
             File dictionary = new File(dictionaryFile);
+
             if (dictionary.exists()) {
                 System.out.println("\n=============================");
                 System.out.println("Analyzing Language: " + language);
@@ -41,13 +43,12 @@ public class VoynichAnalyzer {
             } else {
                 System.err.println("Dictionary not found for language: " + language);
             }
-
         }
     }
 
     public static void performCipherAnalysis(File dictionaryFile, String language) {
         Set<String> validWords = loadDictionary(dictionaryFile);
-        String encryptedText = "foli 93 v possheody qoteeo qosho cphy opchody opor opchy otchdal or shodaiin";
+        String encryptedText = "foli 93 v possheody qoteeo qosho cphy opchody opor opchy otchdal or shodaiin"; // Sample encrypted text
 
         System.out.println("\nAnalyzing encrypted text:");
         System.out.println(encryptedText);
@@ -57,7 +58,6 @@ public class VoynichAnalyzer {
         analyzeMonoalphabeticSubstitutionCipher(encryptedText, validWords);
         analyzeVigenereCipher(encryptedText, validWords);
         analyzeTranspositionCipher(encryptedText, validWords);
-        generateCipherKeys(3); // Example for generating 3-character keys
     }
 
     private static Set<String> loadDictionary(File dictionaryFile) {
@@ -65,7 +65,7 @@ public class VoynichAnalyzer {
         try (BufferedReader br = new BufferedReader(new FileReader(dictionaryFile))) {
             String word;
             while ((word = br.readLine()) != null) {
-                validWords.add(word.toLowerCase().trim());
+                validWords.add(word.toLowerCase().trim()); // Add each word in lower case for case-insensitive matching
             }
         } catch (IOException e) {
             System.err.println("Error reading dictionary: " + e.getMessage());
@@ -178,45 +178,18 @@ public class VoynichAnalyzer {
     }
 
     private static int countValidWords(String text, Set<String> validWords) {
-        // Initialize the counter to keep track of valid words
         int count = 0;
-
-        // Split the input text into words using whitespace as delimiter
         String[] words = text.split("\\s+");
-
-        // Loop through each word in the split text
         for (String word : words) {
-            // If the word is in the validWords set, increment the count
-            if (validWords.contains(word)) {
+            if (validWords.contains(word.toLowerCase())) {  // Match case-insensitively
                 count++;
             }
         }
-
-        // Return the total count of valid words
         return count;
-    }
-
-
-    private static void generateCipherKeys(int keyLength) {
-        System.out.println("\n=== Generating Cipher Keys ===");
-        // Generate all possible keys of length keyLength
-        char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
-        generateCipherKeysRecursive("", keyLength, alphabet);
-    }
-
-    private static void generateCipherKeysRecursive(String currentKey, int keyLength, char[] alphabet) {
-        if (currentKey.length() == keyLength) {
-            System.out.println(currentKey);
-            return;
-        }
-        for (char c : alphabet) {
-            generateCipherKeysRecursive(currentKey + c, keyLength, alphabet);
-        }
     }
 
     private static Map<Character, Character> createMonoalphabeticKey() {
         Map<Character, Character> key = new HashMap<>();
-        // Example: Create a shuffled key for substitution
         String plainAlphabet = "abcdefghijklmnopqrstuvwxyz";
         String shuffledAlphabet = "qazwsxedcrfvtgbyhnujmikolp";
         for (int i = 0; i < plainAlphabet.length(); i++) {
