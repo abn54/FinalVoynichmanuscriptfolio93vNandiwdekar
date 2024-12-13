@@ -2,13 +2,13 @@
  * Project: Voynich Cipher Analyzer
  * Purpose Details: This program performs frequency analysis and attempts to decode a text possibly written in the Voynich manuscript style.
  * It applies various cipher techniques (Caesar cipher, monoalphabetic substitution, Vigenère cipher, transposition cipher) to decipher encrypted text.
- * The analysis is optimized for Latin, Spanish, and Italian using dictionaries to validate words.
+ * The analysis is optimized for Latin, Italian, Portuguese, French, Malay, Proto-Romance, Arabic, Greek, Hebrew using dictionaries to validate words.
  * Future extensions could include support for additional cipher techniques and more advanced frequency analyses.
  * Course: IST 242
  * Author: Aayudh Nandiwdekar
  * Date Developed: December 3, 2024
  * Last Date Changed: December 13, 2024
- * Revision: 1.5
+ * Revision: 1.6
  * Sources Used:
  * 1. "Voynich Manuscript (Encoded Texts)" - Voynich.nu: https://voynich.nu/q17/f093v_tr.txt
  * 2. "Voynich Manuscript: A New Analysis" by R. A. S. Barrett - https://www.academic.oup.com/monographs/abstract/doi/10.1093/actrade/9780198807866.001.0001
@@ -22,7 +22,7 @@ import java.util.*;
 
 public class VoynichAnalyzer {
 
-    private static final String[] LANGUAGES = {"italian", "spanish", "latin"};
+    private static final String[] LANGUAGES = {"italian", "latin", "portuguese", "french", "malay", "proto_romance", "arabic", "greek", "hebrew"};
     private static final String DICTIONARY_PATH = "./dictionary/";  // Path to your dictionary files
     private static final String VIGENERE_KEY = "VOYNICH";
     private static final Map<Character, Character> MONOALPHABETIC_KEY = createMonoalphabeticKey();
@@ -48,16 +48,23 @@ public class VoynichAnalyzer {
 
     public static void performCipherAnalysis(File dictionaryFile, String language) {
         Set<String> validWords = loadDictionary(dictionaryFile);
-        String encryptedText = "foli 93 v possheody qoteeo qosho cphy opchody opor opchy otchdal or shodaiin"; // Sample encrypted text
+        String encryptedText = "possheody qoteeo qosho cphy opchody opor opchy otchdal or shodaiin"; // Correct sample encrypted text
+
+        // Clean the encrypted text by removing non-textual elements (page numbers, references, etc.)
+        encryptedText = cleanText(encryptedText);
 
         System.out.println("\nAnalyzing encrypted text:");
         System.out.println(encryptedText);
 
+        // Perform the various cipher analyses
         analyzeFrequency(encryptedText);
         analyzeCaesarCipher(encryptedText, validWords);
         analyzeMonoalphabeticSubstitutionCipher(encryptedText, validWords);
         analyzeVigenereCipher(encryptedText, validWords);
         analyzeTranspositionCipher(encryptedText, validWords);
+
+        // Perform dictionary-based analysis for the language
+        analyzeTextWithDictionary(encryptedText, validWords, language);
     }
 
     private static Set<String> loadDictionary(File dictionaryFile) {
@@ -71,6 +78,11 @@ public class VoynichAnalyzer {
             System.err.println("Error reading dictionary: " + e.getMessage());
         }
         return validWords;
+    }
+
+    private static String cleanText(String text) {
+        // Remove any non-alphabetical characters, page numbers, or references like 'foli 93 v'
+        return text.replaceAll("[^a-zA-Z\\s]", "").toLowerCase().trim();
     }
 
     private static void analyzeFrequency(String encryptedText) {
@@ -98,6 +110,9 @@ public class VoynichAnalyzer {
 
         String bestDecryptedText = caesarCipherDecrypt(encryptedText, bestShift);
         System.out.println("Decrypted Text with Best Shift: " + bestDecryptedText);
+
+        // Check dictionary validity after Caesar decryption
+        analyzeTextWithDictionary(bestDecryptedText, validWords, "Caesar Decryption");
     }
 
     private static int getBestCaesarShift(String encryptedText, Set<String> validWords) {
@@ -123,6 +138,9 @@ public class VoynichAnalyzer {
         int validWordCount = countValidWords(decryptedText, validWords);
         System.out.println("Valid Words: " + validWordCount);
         System.out.println("Decrypted Text: " + decryptedText);
+
+        // Check dictionary validity after monoalphabetic decryption
+        analyzeTextWithDictionary(decryptedText, validWords, "Monoalphabetic Substitution");
     }
 
     private static void analyzeVigenereCipher(String encryptedText, Set<String> validWords) {
@@ -131,6 +149,9 @@ public class VoynichAnalyzer {
         int validWordCount = countValidWords(decryptedText, validWords);
         System.out.println("Keyword: " + VIGENERE_KEY + " | Valid Words: " + validWordCount);
         System.out.println("Decrypted Text: " + decryptedText);
+
+        // Check dictionary validity after Vigenere decryption
+        analyzeTextWithDictionary(decryptedText, validWords, "Vigenère Cipher");
     }
 
     private static void analyzeTranspositionCipher(String encryptedText, Set<String> validWords) {
@@ -138,14 +159,45 @@ public class VoynichAnalyzer {
         String reversed = new StringBuilder(encryptedText).reverse().toString();
         int validWordCount = countValidWords(reversed, validWords);
         System.out.println("Reversed Text: " + reversed + " | Valid Words: " + validWordCount);
+
+        // Check dictionary validity after transposition decryption
+        analyzeTextWithDictionary(reversed, validWords, "Transposition Cipher");
+    }
+
+    private static void analyzeTextWithDictionary(String encryptedText, Set<String> validWords, String cipherType) {
+        System.out.println("\n=== Dictionary-Based Analysis for " + cipherType + " ===");
+        String[] words = encryptedText.split("\\s+");
+        int validWordCount = 0;
+        Set<String> matchedWords = new HashSet<>();
+
+        for (String word : words) {
+            if (validWords.contains(word.toLowerCase())) {
+                validWordCount++;
+                matchedWords.add(word.toLowerCase());
+            }
+        }
+
+        System.out.println("Valid Words: " + validWordCount);
+        System.out.println("Matched Words: " + matchedWords);
+    }
+
+    private static int countValidWords(String text, Set<String> validWords) {
+        String[] words = text.split("\\s+");
+        int validWordCount = 0;
+        for (String word : words) {
+            if (validWords.contains(word.toLowerCase())) {
+                validWordCount++;
+            }
+        }
+        return validWordCount;
     }
 
     private static String caesarCipherDecrypt(String text, int shift) {
         StringBuilder decryptedText = new StringBuilder();
         for (char ch : text.toCharArray()) {
             if (Character.isLetter(ch)) {
-                char base = (Character.isLowerCase(ch)) ? 'a' : 'A';
-                decryptedText.append((char) (((ch - base - shift + 26) % 26) + base));
+                char base = Character.isLowerCase(ch) ? 'a' : 'A';
+                decryptedText.append((char) ((ch - base - shift + 26) % 26 + base));
             } else {
                 decryptedText.append(ch);
             }
@@ -153,48 +205,42 @@ public class VoynichAnalyzer {
         return decryptedText.toString();
     }
 
-    private static String applyMonoalphabeticCipher(String text) {
+    private static String applyMonoalphabeticCipher(String encryptedText) {
         StringBuilder decryptedText = new StringBuilder();
-        for (char ch : text.toCharArray()) {
-            decryptedText.append(MONOALPHABETIC_KEY.getOrDefault(ch, ch));
+        for (char ch : encryptedText.toCharArray()) {
+            if (Character.isLetter(ch)) {
+                decryptedText.append(MONOALPHABETIC_KEY.getOrDefault(Character.toLowerCase(ch), ch));
+            } else {
+                decryptedText.append(ch);
+            }
         }
         return decryptedText.toString();
     }
 
-    private static String vigenereCipherDecrypt(String text, String keyword) {
+    private static String vigenereCipherDecrypt(String text, String key) {
         StringBuilder decryptedText = new StringBuilder();
-        int keywordIndex = 0;
+        int keyIndex = 0;
         for (char ch : text.toCharArray()) {
             if (Character.isLetter(ch)) {
-                char base = (Character.isLowerCase(ch)) ? 'a' : 'A';
-                int shift = keyword.charAt(keywordIndex % keyword.length()) - base;
-                decryptedText.append((char) (((ch - base - shift + 26) % 26) + base));
-                keywordIndex++;
+                char base = Character.isLowerCase(ch) ? 'a' : 'A';
+                decryptedText.append((char) ((ch - base - key.charAt(keyIndex % key.length()) + base) % 26 + base));
+                keyIndex++;
             } else {
                 decryptedText.append(ch);
             }
         }
         return decryptedText.toString();
-    }
-
-    private static int countValidWords(String text, Set<String> validWords) {
-        int count = 0;
-        String[] words = text.split("\\s+");
-        for (String word : words) {
-            if (validWords.contains(word.toLowerCase())) {  // Match case-insensitively
-                count++;
-            }
-        }
-        return count;
     }
 
     private static Map<Character, Character> createMonoalphabeticKey() {
+        // Implement the logic for your monoalphabetic key based on encryption rules
+        // This is a simple example using a substitution rule
         Map<Character, Character> key = new HashMap<>();
-        String plainAlphabet = "abcdefghijklmnopqrstuvwxyz";
-        String shuffledAlphabet = "qazwsxedcrfvtgbyhnujmikolp";
-        for (int i = 0; i < plainAlphabet.length(); i++) {
-            key.put(plainAlphabet.charAt(i), shuffledAlphabet.charAt(i));
-        }
+        key.put('a', 'm');
+        key.put('b', 'p');
+        key.put('c', 'r');
+        key.put('d', 's');
+        // Add all other characters as necessary
         return key;
     }
 }
