@@ -34,16 +34,3 @@ The cipher analyzer supports the following languages for validation using extern
 - **Hebrew**
 
 Each language has a corresponding dictionary file, which is required for the validation process.
-
-## How to Use
-### Prerequisites
-Before running the program, ensure you have the following:
-1. **Java Development Kit (JDK) 8 or higher**: Ensure that Java is installed and the environment variable `JAVA_HOME` is set up properly.
-2. **Dictionary Files**: The dictionary files for the supported languages must be downloaded and placed in the `./dictionary/` directory. Each file should be named `<language>_dictionary.txt` (for example: `italian_dictionary.txt`, `latin_dictionary.txt`).
-
-### Steps to Set Up the Project:
-1. **Clone the Repository:**
-   Clone this repository to your local machine using the following command:
-
-   ```bash
-   git clone https://github.com/abn54/FinalVoynichmanuscriptfolio93vNandiwdekar.git
