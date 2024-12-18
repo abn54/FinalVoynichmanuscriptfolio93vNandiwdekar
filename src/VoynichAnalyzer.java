@@ -2,7 +2,7 @@
  * Project: Voynich Cipher Analyzer
  * Purpose Details: This program performs frequency analysis and attempts to decode a text possibly written in the Voynich manuscript style.
  * It applies various cipher techniques (Caesar cipher, monoalphabetic substitution, Vigenère cipher, transposition cipher) to decipher encrypted text.
- * The analysis is optimized for Latin, Italian, Portuguese, French, Malay, Proto-Romance, Arabic, Greek, Hebrew using dictionaries to validate words.
+ * The analysis is optimized for Akkadian, Arabic, Aramaic, Egyptian, Etruscan, French, Greek, Hebrew, Italian, Latin, Portuguese, Proto-Romance, and Sumerian using dictionaries to validate words.
  * Future extensions could include support for additional cipher techniques and more advanced frequency analyses.
  * Course: IST 242
  * Author: Aayudh Nandiwdekar
@@ -22,7 +22,7 @@ import java.util.*;
 
 public class VoynichAnalyzer {
 
-    private static final String[] LANGUAGES = {"italian", "latin", "portuguese", "french", "malay", "proto_romance", "arabic", "greek", "hebrew"};
+    private static final String[] LANGUAGES = {"akkadian", "anglosaxxon", "arabic", "aramaic", "celtic","chinese","egyptian", "etruscan","farsi","french", "german", "greek", "hebrew", "italian", "latin", "portuguese", "protoroman", "russian","sanskrit", "spanish", "sumerian"};
     private static final String DICTIONARY_PATH = "./dictionary/";  // Path to your dictionary files
     private static final String VIGENERE_KEY = "VOYNICH";
     private static final Map<Character, Character> MONOALPHABETIC_KEY = createMonoalphabeticKey();
@@ -32,7 +32,7 @@ public class VoynichAnalyzer {
 
         // Loop through supported languages and perform analysis
         for (String language : LANGUAGES) {
-            String dictionaryFile = DICTIONARY_PATH + language + "_dictionary.txt"; // Load dictionary for specific language
+            String dictionaryFile = DICTIONARY_PATH + language + "_dictionary.txt"; // Correct path for dictionary files
             File dictionary = new File(dictionaryFile);
 
             if (dictionary.exists()) {
@@ -217,13 +217,13 @@ public class VoynichAnalyzer {
         return decryptedText.toString();
     }
 
-    private static String vigenereCipherDecrypt(String text, String key) {
+    private static String vigenereCipherDecrypt(String encryptedText, String key) {
         StringBuilder decryptedText = new StringBuilder();
         int keyIndex = 0;
-        for (char ch : text.toCharArray()) {
+        for (char ch : encryptedText.toCharArray()) {
             if (Character.isLetter(ch)) {
                 char base = Character.isLowerCase(ch) ? 'a' : 'A';
-                decryptedText.append((char) ((ch - base - key.charAt(keyIndex % key.length()) + base) % 26 + base));
+                decryptedText.append((char) ((ch - base - (key.charAt(keyIndex % key.length()) - base) + 26) % 26 + base));
                 keyIndex++;
             } else {
                 decryptedText.append(ch);
@@ -233,14 +233,13 @@ public class VoynichAnalyzer {
     }
 
     private static Map<Character, Character> createMonoalphabeticKey() {
-        // Implement the logic for your monoalphabetic key based on encryption rules
-        // This is a simple example using a substitution rule
         Map<Character, Character> key = new HashMap<>();
-        key.put('a', 'm');
-        key.put('b', 'p');
-        key.put('c', 'r');
-        key.put('d', 's');
-        // Add all other characters as necessary
+        // Example: simple substitution for testing
+        key.put('a', 'z');
+        key.put('b', 'y');
+        key.put('c', 'x');
+        key.put('d', 'w');
+        // Continue for the rest of the alphabet...
         return key;
     }
 }
