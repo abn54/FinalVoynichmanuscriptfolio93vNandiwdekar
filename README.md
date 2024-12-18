@@ -1,36 +1,43 @@
 # Voynich Cipher Analyzer
 
 ## Project Overview
-The **Voynich Cipher Analyzer** is a Java-based program designed to analyze and potentially decode texts written in the mysterious Voynich Manuscript. The manuscript, written in an unknown script and language, has perplexed cryptographers and linguists for centuries. This tool attempts to decipher the manuscript's cipher using a range of common cipher decryption techniques, such as Caesar cipher, monoalphabetic substitution cipher, Vigenère cipher, and transposition cipher. 
+The **Voynich Cipher Analyzer** is a program designed to analyze and attempt to decode texts that may have been written using a cipher similar to the Voynich Manuscript's. The program applies various cipher techniques to analyze encrypted text and explores the possibility of decoding it. 
 
-The project also integrates language validation by checking decrypted texts against word dictionaries for various languages. The goal of the program is to provide possible decryptions of encrypted texts by applying multiple techniques, measuring their validity, and suggesting the most likely cipher used.
+The analysis process includes the application of several cipher techniques:
+- **Caesar Cipher**
+- **Monoalphabetic Substitution Cipher**
+- **Vigenère Cipher**
+- **Transposition Cipher**
 
-## Purpose of the Project
-The purpose of this project is to:
-- Analyze encrypted texts using common cipher techniques.
-- Apply frequency analysis to determine character patterns.
-- Decrypt the text using multiple cipher methods: Caesar cipher, monoalphabetic substitution cipher, Vigenère cipher, and transposition cipher.
-- Validate decrypted text using language-specific dictionaries.
-- Explore the decryption of the Voynich Manuscript-like texts by utilizing cryptographic techniques.
+The analyzer performs frequency analysis and utilizes dictionaries of various ancient and modern languages to validate potential deciphered words. This provides insight into the nature of the text and whether it could be a meaningful language.
+
+## Purpose Details
+This program performs frequency analysis and attempts to decode a text possibly written in the Voynich manuscript style. It applies various cipher techniques (Caesar cipher, monoalphabetic substitution, Vigenère cipher, transposition cipher) to decipher encrypted text. The analysis is optimized for Akkadian, Arabic, Aramaic, Egyptian, Etruscan, French, Greek, Hebrew, Italian, Latin, Portuguese, Proto-Romance, and Sumerian using dictionaries to validate words. Future extensions could include support for additional cipher techniques and more advanced frequency analyses.
 
 ## Features
-- **Frequency Analysis:** Measures the frequency of characters in the encrypted text, which is useful for cipher decryption techniques like the Caesar cipher and monoalphabetic substitution.
-- **Caesar Cipher:** Decrypts the text by trying all 25 possible shifts (since the Caesar cipher is a shift cipher with a fixed key length of 26 letters).
-- **Monoalphabetic Substitution Cipher:** Attempts to decode the text by replacing each letter with another based on a pre-defined substitution key.
-- **Vigenère Cipher:** Decrypts the text using a Vigenère cipher with a fixed key.
-- **Transposition Cipher:** Checks for a possible transposition cipher by reversing the encrypted text and analyzing the result.
-- **Dictionary Validation:** Checks the decrypted text for validity by comparing the words against language dictionaries.
+- Frequency analysis of encrypted text
+- Decryption attempts using multiple cipher techniques
+- Language-specific dictionary validation
+- User-friendly interface with clear output and step-by-step analysis
 
-## Languages Supported
-The cipher analyzer supports the following languages for validation using external dictionary files:
-- **Italian**
-- **Latin**
-- **Portuguese**
-- **French**
-- **Malay**
-- **Proto-Romance**
-- **Arabic**
-- **Greek**
-- **Hebrew**
-
-Each language has a corresponding dictionary file, which is required for the validation process.
+## Supported Languages
+- Akkadian
+- Arabic
+- Aramaic
+- Celtic
+- Chinese
+- Egyptian
+- Etruscan
+- Farsi
+- French
+- German
+- Greek
+- Hebrew
+- Italian
+- Latin
+- Portuguese
+- Proto-Romance
+- Russian
+- Sanskrit
+- Spanish
+- Sumerian
